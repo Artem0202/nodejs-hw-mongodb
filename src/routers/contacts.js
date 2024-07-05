@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  getHomeController,
   getAllContactsController,
   getContactByIdController,
   createNewContactController,
@@ -8,10 +9,10 @@ import {
   patchContactController,
 } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-// import { isValidId } from "../middlewares/isValidId.js";
 
 const contactRouter = Router();
 
+contactRouter.get('/', ctrlWrapper(getHomeController));
 contactRouter.get('/contacts', ctrlWrapper(getAllContactsController));
 contactRouter.get(
   '/contacts/:contactId',

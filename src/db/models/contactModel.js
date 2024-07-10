@@ -20,6 +20,11 @@ const contactShema = new Schema(
       default: false,
       required: false,
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     contactType: {
       type: String,
       required: false,

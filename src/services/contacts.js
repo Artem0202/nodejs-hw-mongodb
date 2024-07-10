@@ -18,10 +18,7 @@ export const getAllContacts = async ({
     dataBaseQuery.where('isFavourite').equals(filter.isFavourite);
   }
 
-  const totalContacts = await contactsCollection
-    .find()
-    .merge(dataBaseQuery)
-    .countDocuments();
+  const totalContacts = await contactsCollection.find().merge(dataBaseQuery).countDocuments();
   const data = await dataBaseQuery
     .skip(skip)
     .limit(perPage)
@@ -45,8 +42,7 @@ export const getAllContacts = async ({
   };
 };
 
-export const getContactById = (contactId) =>
-  contactsCollection.findById(contactId);
+export const getContactById = (contactId) => contactsCollection.findById(contactId);
 
 export const createContact = (data) => contactsCollection.create(data);
 
@@ -65,5 +61,4 @@ export const upsertContact = async (filter, data, options = {}) => {
   };
 };
 
-export const deleteContact = (filter) =>
-  contactsCollection.findOneAndDelete(filter);
+export const deleteContact = (filter) => contactsCollection.findOneAndDelete(filter);

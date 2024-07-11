@@ -27,7 +27,7 @@ export const registerUserController = async (req, res) => {
     email: user.email,
   };
 
-  res.json({
+  res.status(201).json({
     status: 201,
     message: 'Successfully registered a user!',
     data,
@@ -78,7 +78,7 @@ export const refreshUserController = async (req, res) => {
 
   res.json({
     status: 200,
-    message: 'User signin successfully',
+    message: 'Successfully refreshed a session!',
     data: {
       accessToken: newSession.accessToken,
     },
@@ -88,7 +88,7 @@ export const refreshUserController = async (req, res) => {
 export const singoutController = async (req, res) => {
   const { sessionId } = req.cookies;
   if (!sessionId) {
-    throw createHttpError(401, 'session not found');
+    throw createHttpError(401, 'Session not found');
   }
 
   await deleteSession({ _id: sessionId });

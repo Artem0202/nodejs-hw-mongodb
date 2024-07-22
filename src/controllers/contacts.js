@@ -6,10 +6,13 @@ import {
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 import { createContact } from '../services/contacts.js';
-import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { fieldList } from '../constants/index.js';
 import { parseContactFilterParems } from '../utils/parseContactFilterParams.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
 
 export const getHomeController = async (req, res, next) => {
   res.json({
@@ -57,7 +60,14 @@ export const getContactByIdController = async (req, res) => {
 
 export const createNewContactController = async (req, res) => {
   const { _id: userId } = req.user;
-  const data = await createContact({ ...req.body, userId });
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    photoUrl = await saveFileToUploadDir(photo);
+  }
+
+  const data = await createContact(userId, { ...req.body, photo: photoUrl });
+  console.log(data);
 
   res.status(201).json({
     status: 201,
@@ -84,7 +94,20 @@ export const updateContactController = async (req, res) => {
 export const patchContactController = async (req, res) => {
   const { _id: userId } = req.user;
   const { contactId } = req.params;
-  const result = await upsertContact({ _id: contactId, userId }, req.body);
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    photoUrl = await saveFileToCloudinary(photo);
+  } else {
+    photoUrl = await saveFileToUploadDir(photo);
+  }
+  const result = await upsertContact(
+    { userId },
+    {
+      ...req.body,
+      photo: photoUrl,
+    },
+  );
 
   if (!result) {
     throw createHttpError(404, `Contact with id=${contactId} not found`);

@@ -22,7 +22,7 @@ authRouter.post('/auth/login', validateBody(userSinginSchema), ctrlWrapper(login
 authRouter.post('/auth/refresh', ctrlWrapper(refreshUserController));
 authRouter.post('/auth/logout', ctrlWrapper(singoutController));
 authRouter.post(
-  '/auth/request-reset-email',
+  '/auth/send-reset-email',
   validateBody(requestResetEmailSchema),
   ctrlWrapper(requestResetEmailController),
 );

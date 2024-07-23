@@ -67,7 +67,6 @@ export const createNewContactController = async (req, res) => {
   }
 
   const data = await createContact(userId, { ...req.body, photo: photoUrl });
-  console.log(data);
 
   res.status(201).json({
     status: 201,
@@ -92,9 +91,10 @@ export const updateContactController = async (req, res) => {
 };
 
 export const patchContactController = async (req, res) => {
-  const { _id: userId } = req.user;
   const { contactId } = req.params;
+  const userId = req.user._id;
   const photo = req.file;
+
   let photoUrl;
   if (photo) {
     photoUrl = await saveFileToCloudinary(photo);
@@ -102,11 +102,12 @@ export const patchContactController = async (req, res) => {
     photoUrl = await saveFileToUploadDir(photo);
   }
   const result = await upsertContact(
-    { userId },
+    contactId,
     {
       ...req.body,
       photo: photoUrl,
     },
+    userId,
   );
 
   if (!result) {

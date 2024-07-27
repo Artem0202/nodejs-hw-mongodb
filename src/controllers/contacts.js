@@ -6,7 +6,7 @@ import {
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 import { createContact } from '../services/contacts.js';
-
+import { env } from '../utils/env.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { fieldList } from '../constants/index.js';
 import { parseContactFilterParems } from '../utils/parseContactFilterParams.js';
@@ -62,10 +62,13 @@ export const createNewContactController = async (req, res) => {
   const { _id: userId } = req.user;
   const photo = req.file;
   let photoUrl;
+
   if (photo) {
-    photoUrl = await saveFileToCloudinary(photo);
-  } else {
-    photoUrl = await saveFileToUploadDir(photo);
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
   const data = await createContact({ userId, ...req.body, photo: photoUrl });
@@ -99,9 +102,11 @@ export const patchContactController = async (req, res) => {
 
   let photoUrl;
   if (photo) {
-    photoUrl = await saveFileToCloudinary(photo);
-  } else {
-    photoUrl = await saveFileToUploadDir(photo);
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
   const result = await upsertContact(
     contactId,
